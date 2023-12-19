@@ -36,8 +36,8 @@
 
         const headers = {
             "Content-Type": "application/json",
-            "X-RapidAPI-Key": "68eac826aemshb59465bf854ed05p11a73ajsn8d54798d0035",
-            "X-RapidAPI-Host": "travel-co2-climate-carbon-emissions.p.rapidapi.com"
+            "X-RapidAPI-Key": {},
+            "X-RapidAPI-Host": {}
         };
 
         try {
