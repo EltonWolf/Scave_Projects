@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emissions Calculator</title>
+    <style>
+        body {
+            font-family: 'Questrial', sans-serif;
+            font-size: 20px;
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 150px; /* Adjust the width as needed */
+        }
+
+        select,
+        input {
+            font-size: 20px;
+            padding: 10px; /* Adjust the padding as needed */
+            width: 200px; /* Adjust the width as needed */
+        }
+
+        button {
+            font-size: 24px; /* Increased font size */
+            padding: 12px 20px; /* Adjust the padding as needed */
+        }
+
+        #results-container {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div>
+            <label for="origin">Origin: </label>
+            <input type="text" id="origin" placeholder="Enter origin">
+        </div>
+
+        <div>
+            <label for="destination">Destination: </label>
+            <input type="text" id="destination" placeholder="Enter destination">
+        </div>
+
+        <div>
+            <label for="carrierCode">Operating Carrier Code: </label>
+            <input type="text" id="carrierCode" placeholder="Enter carrier code">
+        </div>
+
+        <div>
+            <label for="flightNumber">Flight Number: </label>
+            <input type="text" id="flightNumber" placeholder="Enter flight number">
+        </div>
+
+        <div>
+            <label for="departureDate">Departure Date: </label>
+            <input type="date" id="departureDate">
+        </div>
+
+        <div>
+            <label for="ways">Ways: </label>
+            <input type="number" id="ways" placeholder="Enter number of ways">
+        </div>
+
+        <div>
+            <label for="people">People: </label>
+            <input type="number" id="people" placeholder="Enter number of people">
+        </div>
+
+        <div>
+            <button onclick="calculateEmissions()">Calculate Emissions</button>
+        </div>
+    </div>
+
+    <!-- Results will be displayed here -->
+    <div id="results-container"></div>
+
+    <script>
+        async function calculateEmissions() {
+            const apiKey = 'YOUR_GOOGLE_API_KEY'; // Replace with your actual API key
+            const emissionsUrl = 'https://travelimpactmodel.googleapis.com/v1/flights:computeFlightEmissions?key=' + apiKey;;
+
+            const originInput = document.getElementById("origin").value;
+            const destinationInput = document.getElementById("destination").value;
+            const carrierCodeInput = document.getElementById("carrierCode").value;
+            const flightNumberInput = document.getElementById("flightNumber").value;
+            const departureDateInput = document.getElementById("departureDate").value;
+            const waysInput = document.getElementById("ways").value;
+            const peopleInput = document.getElementById("people").value;
+
+            const payload = {
+                "flights": [
+                    {
+                        "origin": originInput,
+                        "destination": destinationInput,
+                        "operatingCarrierCode": carrierCodeInput,
+                        "flightNumber": flightNumberInput,
+                        "departureDate": departureDateInput
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch(emissionsUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displayResults(result);
+                } else {
+                    console.error("Error calculating emissions:", response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error("Error calculating emissions:", error);
+            }
+        }
+
+        function displayResults(result) {
+            const resultsContainer = document.getElementById("results-container");
+            resultsContainer.innerHTML = `<p>Carbon Emissions: ${result.flightEmissions[0].emissionsGramsPerPax.economy}</p>`;
+        }
+    </script>
+</body>
+
+</html>
